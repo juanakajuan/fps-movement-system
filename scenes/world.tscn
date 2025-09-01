@@ -1,10 +1,13 @@
-[gd_scene load_steps=19 format=3 uid="uid://ceup1gt5a4npc"]
+[gd_scene load_steps=22 format=3 uid="uid://ceup1gt5a4npc"]
 
-[ext_resource type="Script" uid="uid://blhibie7skepc" path="res://scripts/fps.gd" id="1_71j4m"]
-[ext_resource type="Script" uid="uid://cjrmehqh5flmm" path="res://scripts/character_body_3d.gd" id="2_qfnet"]
-[ext_resource type="Texture2D" path="res://black/texture_01.png" id="3_i7141"]
-[ext_resource type="Texture2D" path="res://green/texture_01.png" id="4_4mrxx"]
-[ext_resource type="Texture2D" path="res://red/texture_01.png" id="5_7r4gi"]
+[ext_resource type="Script" uid="uid://blhibie7skepc" path="res://scripts/ui/fps.gd" id="1_71j4m"]
+[ext_resource type="Script" uid="uid://cjrmehqh5flmm" path="res://scripts/player_controller.gd" id="2_qfnet"]
+[ext_resource type="Script" uid="uid://cf55dpghspsye" path="res://scripts/input_component.gd" id="3_4mrxx"]
+[ext_resource type="Texture2D" uid="uid://83ldc8dgl3k5" path="res://assets/textures/black/texture_01.png" id="3_i7141"]
+[ext_resource type="Texture2D" uid="uid://nma7wrtoodoy" path="res://assets/textures/green/texture_01.png" id="4_4mrxx"]
+[ext_resource type="Script" uid="uid://d4lepid3uibhs" path="res://scripts/movement_component.gd" id="4_7r4gi"]
+[ext_resource type="Texture2D" uid="uid://d22jfvqifb0on" path="res://assets/textures/red/texture_01.png" id="5_7r4gi"]
+[ext_resource type="Script" uid="uid://cdvtv443i6qxn" path="res://scripts/camera_component.gd" id="5_w7kh3"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_go701"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -56,11 +59,11 @@ script = ExtResource("1_71j4m")
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -40.0
-offset_bottom = 23.0
+offset_left = -50.0
+offset_right = -10.0
+offset_bottom = 42.0
 grow_horizontal = 0
 theme_override_font_sizes/font_size = 30
-text = "FPS"
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
@@ -72,7 +75,7 @@ environment = SubResource("Environment_8j60k")
 [node name="PlayerController" type="CharacterBody3D" parent="."]
 script = ExtResource("2_qfnet")
 
-[node name="PlaceholderMesh" type="MeshInstance3D" parent="PlayerController"]
+[node name="Mesh" type="MeshInstance3D" parent="PlayerController"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.09363, 0)
 material_override = SubResource("StandardMaterial3D_5ukr8")
 mesh = SubResource("CapsuleMesh_fo5ed")
@@ -81,14 +84,19 @@ mesh = SubResource("CapsuleMesh_fo5ed")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.09363, 0)
 shape = SubResource("CapsuleShape3D_a02cp")
 
-[node name="CameraController" type="Node3D" parent="PlayerController"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75892, 0)
+[node name="InputComponent" type="Node" parent="PlayerController"]
+script = ExtResource("3_4mrxx")
 
-[node name="Camera3D" type="Camera3D" parent="PlayerController/CameraController"]
+[node name="MovementComponent" type="Node" parent="PlayerController"]
+script = ExtResource("4_7r4gi")
 
-[node name="Components" type="Node" parent="PlayerController"]
+[node name="CameraComponent" type="Node3D" parent="PlayerController"]
+script = ExtResource("5_w7kh3")
 
-[node name="MouseCapture" type="Node" parent="PlayerController/Components"]
+[node name="CameraController" type="Node3D" parent="PlayerController/CameraComponent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.66775, 0)
+
+[node name="Camera3D" type="Camera3D" parent="PlayerController/CameraComponent/CameraController"]
 
 [node name="Floor" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.170887, 0, 0.00488281)
