@@ -14,8 +14,8 @@ var head_bob_timer = 0
 const BASE_FOV = 75.0
 const FOV_CHANGE = 1.5
 
-@onready var head = $Head
-@onready var camera = $Head/Camera3D
+@onready var camera_controller = $CameraController
+@onready var camera = $CameraController/Camera3D
 
 
 func _ready() -> void:
@@ -24,7 +24,7 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
-		head.rotate_y(-event.relative.x * SENSITIVITY)
+		camera_controller.rotate_y(-event.relative.x * SENSITIVITY)
 		camera.rotate_x(-event.relative.y * SENSITIVITY)
 		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-40.0), deg_to_rad(60.0))
 
@@ -46,7 +46,7 @@ func _physics_process(delta: float) -> void:
 
 	# Get the input direction and handle the movement/deceleration
 	var input_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	var direction = (head.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+	var direction = (camera_controller.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	if is_on_floor():
 		if direction:
 			velocity.x = direction.x * speed
