@@ -29,6 +29,8 @@ func _ready() -> void:
 	standing_position = camera_controller.position
 	crouch_position = standing_position + Vector3(0, crouch_height_offset, 0)
 
+	reset_physics_interpolation()
+
 
 func handle_look_input(mouse_delta: Vector2) -> void:
 	camera_controller.rotate_y(-mouse_delta.x * sensitivity)
