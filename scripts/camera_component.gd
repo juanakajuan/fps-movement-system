@@ -12,9 +12,22 @@ var head_bob_timer: float = 0.0
 @export var base_fov: float = 75.0
 @export var fov_change: float = 1.5
 
+@export_category("Crouch Camera")
+@export var crouch_height_offset: float = -0.5
+@export var crouch_transition_speed: float = 8.0
+
+var is_crouching: bool = false
+var standing_position: Vector3
+var crouch_position: Vector3
+
 @onready var camera_controller: Node3D = $CameraController
 @onready var camera: Camera3D = $CameraController/Camera3D
 @onready var player: CharacterBody3D = get_parent()
+
+
+func _ready() -> void:
+	standing_position = camera_controller.position
+	crouch_position = standing_position + Vector3(0, crouch_height_offset, 0)
 
 
 func handle_look_input(mouse_delta: Vector2) -> void:
@@ -26,6 +39,7 @@ func handle_look_input(mouse_delta: Vector2) -> void:
 func process_camera_effects(delta: float, velocity: Vector3) -> void:
 	_update_head_bob(delta, velocity)
 	_update_fov(delta, velocity)
+	_update_crouch_camera(delta)
 
 
 func _update_head_bob(delta: float, velocity: Vector3) -> void:
@@ -44,3 +58,14 @@ func _calculate_headbob(time: float) -> Vector3:
 	pos.y = sin(time * bob_frequency) * bob_amplitude
 	pos.x = cos(time * bob_frequency / 2) * bob_amplitude
 	return pos
+
+
+## Sets the crouching state and triggers camera height transition
+func set_crouching(crouching: bool) -> void:
+	is_crouching = crouching
+
+
+## Smoothly transitions camera height based on crouch state
+func _update_crouch_camera(delta: float) -> void:
+	var target_position: Vector3 = crouch_position if is_crouching else standing_position
+	camera_controller.position = camera_controller.position.lerp(target_position, delta * crouch_transition_speed)

@@ -5,6 +5,7 @@ signal movement_input(direction: Vector2)
 signal look_input(mouse_delta: Vector2)
 signal jump_input()
 signal sprint_input(is_sprinting: bool)
+signal crouch_input(is_crouching: bool)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
@@ -13,8 +14,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _process(_delta: float) -> void:
 	# Movement input
 	var input_dir: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	if input_dir != Vector2.ZERO:
-		movement_input.emit(input_dir)
+	movement_input.emit(input_dir)
 
 	# Jump input
 	if Input.is_action_just_pressed("jump"):
@@ -23,4 +23,8 @@ func _process(_delta: float) -> void:
 	# Sprint input
 	var is_sprinting: bool = Input.is_action_pressed("sprint")
 	sprint_input.emit(is_sprinting)
+
+	# Crouch input
+	var is_crouching: bool = Input.is_action_pressed("crouch")
+	crouch_input.emit(is_crouching)
 

@@ -14,6 +14,7 @@ func _ready() -> void:
 	input_component.look_input.connect(_on_look_input)
 	input_component.jump_input.connect(_on_jump_input)
 	input_component.sprint_input.connect(_on_sprint_input)
+	input_component.crouch_input.connect(_on_crouch_input)
 
 
 func _physics_process(delta: float) -> void:
@@ -37,3 +38,10 @@ func _on_jump_input() -> void:
 
 func _on_sprint_input(is_sprinting: bool) -> void:
 	movement_component.set_sprinting(is_sprinting)
+
+
+func _on_crouch_input(is_crouching: bool) -> void:
+	movement_component.set_crouching(is_crouching)
+	# Only update camera if crouch state actually changed
+	if movement_component.is_crouching == is_crouching:
+		camera_component.set_crouching(is_crouching)
