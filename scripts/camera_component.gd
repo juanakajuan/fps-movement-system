@@ -23,6 +23,7 @@ var crouch_position: Vector3
 @onready var camera_controller: Node3D = $CameraController
 @onready var camera: Camera3D = $CameraController/Camera3D
 @onready var player: CharacterBody3D = get_parent()
+@onready var movement_component: MovementComponent = player.get_node("MovementComponent")
 
 
 func _ready() -> void:
@@ -50,7 +51,7 @@ func _update_head_bob(delta: float, velocity: Vector3) -> void:
 
 
 func _update_fov(delta: float, velocity: Vector3) -> void:
-	var velocity_clamped: float = clamp(velocity.length(), 0.5, 8.0 * 2)  # sprint_speed * 2
+	var velocity_clamped: float = clamp(velocity.length(), 0.5, movement_component.sprint_speed * 2)
 	var target_fov: float = base_fov + fov_change * velocity_clamped
 	camera.fov = lerp(camera.fov, target_fov, delta * 8.0)
 
