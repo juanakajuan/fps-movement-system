@@ -100,9 +100,9 @@ func _can_stand_up() -> bool:
 		return true
 
 	# Create a temporary shape query for standing collision
-	var space_state = player.get_world_3d().direct_space_state
-	var query = PhysicsShapeQueryParameters3D.new()
-	var temp_shape = CapsuleShape3D.new()
+	var space_state: PhysicsDirectSpaceState3D = player.get_world_3d().direct_space_state
+	var query: PhysicsShapeQueryParameters3D = PhysicsShapeQueryParameters3D.new()
+	var temp_shape: CapsuleShape3D = CapsuleShape3D.new()
 	temp_shape.height = standing_capsule_height
 	temp_shape.radius = capsule_shape.radius
 
@@ -113,7 +113,7 @@ func _can_stand_up() -> bool:
 	query.collision_mask = player.collision_mask
 	query.exclude = [player.get_rid()]
 
-	var result = space_state.intersect_shape(query)
+	var result: Array[Dictionary] = space_state.intersect_shape(query)
 	return result.is_empty()
 
 
@@ -132,7 +132,7 @@ func process_movement(delta: float) -> void:
 		player.velocity.y -= gravity * delta
 
 	# Calculate movement direction in world space
-	var direction = (
+	var direction: Vector3 = (
 		(camera_controller.transform.basis * Vector3(input_direction.x, 0, input_direction.y))
 		. normalized()
 	)

@@ -50,13 +50,13 @@ func _update_head_bob(delta: float, velocity: Vector3) -> void:
 
 
 func _update_fov(delta: float, velocity: Vector3) -> void:
-	var velocity_clamped = clamp(velocity.length(), 0.5, 8.0 * 2) # sprint_speed * 2
-	var target_fov = base_fov + fov_change * velocity_clamped
+	var velocity_clamped: float = clamp(velocity.length(), 0.5, 8.0 * 2)  # sprint_speed * 2
+	var target_fov: float = base_fov + fov_change * velocity_clamped
 	camera.fov = lerp(camera.fov, target_fov, delta * 8.0)
 
 
 func _calculate_headbob(time: float) -> Vector3:
-	var pos = Vector3.ZERO
+	var pos: Vector3 = Vector3.ZERO
 	pos.y = sin(time * bob_frequency) * bob_amplitude
 	pos.x = cos(time * bob_frequency / 2) * bob_amplitude
 	return pos
@@ -70,4 +70,6 @@ func set_crouching(crouching: bool) -> void:
 ## Smoothly transitions camera height based on crouch state
 func _update_crouch_camera(delta: float) -> void:
 	var target_position: Vector3 = crouch_position if is_crouching else standing_position
-	camera_controller.position = camera_controller.position.lerp(target_position, delta * crouch_transition_speed)
+	camera_controller.position = camera_controller.position.lerp(
+		target_position, delta * crouch_transition_speed
+	)

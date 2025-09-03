@@ -2,8 +2,8 @@ extends CharacterBody3D
 class_name PlayerController
 
 @onready var movement_component: MovementComponent = $MovementComponent
-@onready var camera_component = $CameraComponent
-@onready var input_component = $InputComponent
+@onready var camera_component: CameraComponent = $CameraComponent
+@onready var input_component: InputComponent = $InputComponent
 
 
 func _ready() -> void:
@@ -42,6 +42,7 @@ func _on_sprint_input(is_sprinting: bool) -> void:
 
 func _on_crouch_input(is_crouching: bool) -> void:
 	movement_component.set_crouching(is_crouching)
+
 	# Only update camera if crouch state actually changed
 	if movement_component.is_crouching == is_crouching:
 		camera_component.set_crouching(is_crouching)

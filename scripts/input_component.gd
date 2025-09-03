@@ -3,13 +3,15 @@ class_name InputComponent
 
 signal movement_input(direction: Vector2)
 signal look_input(mouse_delta: Vector2)
-signal jump_input()
+signal jump_input
 signal sprint_input(is_sprinting: bool)
 signal crouch_input(is_crouching: bool)
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		look_input.emit(event.relative)
+
 
 func _process(_delta: float) -> void:
 	# Movement input
@@ -27,4 +29,3 @@ func _process(_delta: float) -> void:
 	# Crouch input
 	var is_crouching: bool = Input.is_action_pressed("crouch")
 	crouch_input.emit(is_crouching)
-
