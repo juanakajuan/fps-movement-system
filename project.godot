@@ -10,10 +10,15 @@ config_version=5
 
 [application]
 
-config/name="FPS Game"
+config/name="FPS Movement System"
 run/main_scene="uid://ceup1gt5a4npc"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
+
+[debug]
+
+gdscript/warnings/untyped_declaration=1
+gdscript/warnings/inferred_declaration=1
 
 [display]
 

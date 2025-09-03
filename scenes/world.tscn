@@ -1,13 +1,13 @@
-[gd_scene load_steps=22 format=3 uid="uid://ceup1gt5a4npc"]
+[gd_scene load_steps=23 format=3 uid="uid://ceup1gt5a4npc"]
 
 [ext_resource type="Script" uid="uid://blhibie7skepc" path="res://scripts/ui/fps.gd" id="1_71j4m"]
 [ext_resource type="Script" uid="uid://cjrmehqh5flmm" path="res://scripts/player_controller.gd" id="2_qfnet"]
 [ext_resource type="Script" uid="uid://cf55dpghspsye" path="res://scripts/input_component.gd" id="3_4mrxx"]
-[ext_resource type="Texture2D" uid="uid://83ldc8dgl3k5" path="res://assets/textures/black/texture_01.png" id="3_i7141"]
-[ext_resource type="Texture2D" uid="uid://nma7wrtoodoy" path="res://assets/textures/green/texture_01.png" id="4_4mrxx"]
 [ext_resource type="Script" uid="uid://d4lepid3uibhs" path="res://scripts/movement_component.gd" id="4_7r4gi"]
-[ext_resource type="Texture2D" uid="uid://d22jfvqifb0on" path="res://assets/textures/red/texture_01.png" id="5_7r4gi"]
 [ext_resource type="Script" uid="uid://cdvtv443i6qxn" path="res://scripts/camera_component.gd" id="5_w7kh3"]
+[ext_resource type="Texture2D" uid="uid://ybjgmgdllmmg" path="res://addons/kenney_prototype_textures/dark/texture_07.png" id="6_4mrxx"]
+[ext_resource type="Texture2D" uid="uid://cbloiu0bh8tg0" path="res://addons/kenney_prototype_textures/green/texture_08.png" id="7_7r4gi"]
+[ext_resource type="Texture2D" uid="uid://b1ix6fq2ayqbb" path="res://addons/kenney_prototype_textures/red/texture_08.png" id="8_w7kh3"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_go701"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -29,26 +29,34 @@ albedo_color = Color(1, 0.199879, 0.249231, 1)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_a02cp"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fo5ed"]
-albedo_texture = ExtResource("3_i7141")
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e3hyu"]
+albedo_texture = ExtResource("6_4mrxx")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o06y3"]
-albedo_texture = ExtResource("4_4mrxx")
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4mrxx"]
+albedo_texture = ExtResource("7_7r4gi")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k7acu"]
-albedo_texture = ExtResource("4_4mrxx")
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jhx03"]
+albedo_texture = ExtResource("7_7r4gi")
+uv1_triplanar = true
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5v1tr"]
-albedo_texture = ExtResource("5_7r4gi")
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o8fc1"]
+albedo_texture = ExtResource("8_w7kh3")
+uv1_triplanar = true
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0fj1v"]
-albedo_texture = ExtResource("5_7r4gi")
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xo05s"]
+albedo_texture = ExtResource("8_w7kh3")
+uv1_triplanar = true
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ikia7"]
-albedo_texture = ExtResource("5_7r4gi")
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dss4m"]
+albedo_texture = ExtResource("8_w7kh3")
+uv1_triplanar = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8j60k"]
 albedo_color = Color(0.231518, 0.231518, 0.231518, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7t5mc"]
+albedo_texture = ExtResource("8_w7kh3")
+uv1_triplanar = true
 
 [node name="World" type="Node3D"]
 
@@ -89,6 +97,8 @@ script = ExtResource("3_4mrxx")
 
 [node name="MovementComponent" type="Node" parent="PlayerController"]
 script = ExtResource("4_7r4gi")
+jump_velocity = 7.0
+gravity = 20.0
 
 [node name="CameraComponent" type="Node3D" parent="PlayerController"]
 script = ExtResource("5_w7kh3")
@@ -100,37 +110,37 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 
 [node name="Floor" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.170887, 0, 0.00488281)
-material_override = SubResource("StandardMaterial3D_fo5ed")
+material_override = SubResource("StandardMaterial3D_e3hyu")
 use_collision = true
 size = Vector3(32.9229, 0.002, 27.1094)
 
 [node name="CSGBox3D2" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.17854, 1.61696, -4.1416)
-material_override = SubResource("StandardMaterial3D_o06y3")
+material_override = SubResource("StandardMaterial3D_4mrxx")
 use_collision = true
 size = Vector3(1.93164, 3.20947, 2.58008)
 
 [node name="CSGBox3D5" type="CSGBox3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -8.7256, 1.16902, -9.23395)
-material_override = SubResource("StandardMaterial3D_k7acu")
+material_override = SubResource("StandardMaterial3D_jhx03")
 use_collision = true
 size = Vector3(1.93164, 2.3136, 4.69812)
 
 [node name="CSGBox3D3" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.14939, 0.318877, 1.56996)
-material_override = SubResource("StandardMaterial3D_5v1tr")
+material_override = SubResource("StandardMaterial3D_o8fc1")
 use_collision = true
 size = Vector3(1, 0.627808, 4.07715)
 
 [node name="CSGBox3D4" type="CSGBox3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -1.94166, 1.78601, 7.65238)
-material_override = SubResource("StandardMaterial3D_0fj1v")
+material_override = SubResource("StandardMaterial3D_xo05s")
 use_collision = true
 size = Vector3(1, 3.56207, 4.07715)
 
 [node name="CSGBox3D6" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, -1.74846e-07, 0, 1, 0, 1.74846e-07, 0, 1, -12.9437, 1.78601, -0.712237)
-material_override = SubResource("StandardMaterial3D_ikia7")
+material_override = SubResource("StandardMaterial3D_dss4m")
 use_collision = true
 size = Vector3(1, 3.56207, 7.05078)
 
@@ -160,6 +170,6 @@ size = Vector3(34.0475, 6.82568, 1)
 
 [node name="CSGBox3D11" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.20359, 1.5, 7.67788)
-material_override = SubResource("StandardMaterial3D_5v1tr")
+material_override = SubResource("StandardMaterial3D_7t5mc")
 use_collision = true
 size = Vector3(1, 0.627808, 4.07715)

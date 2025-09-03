@@ -1,7 +1,7 @@
 extends CharacterBody3D
 class_name PlayerController
 
-@onready var movement_component = $MovementComponent
+@onready var movement_component: MovementComponent = $MovementComponent
 @onready var camera_component = $CameraComponent
 @onready var input_component = $InputComponent
 

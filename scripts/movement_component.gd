@@ -5,8 +5,8 @@ class_name MovementComponent
 @export var walk_speed: float = 5.0
 @export var sprint_speed: float = 8.0
 @export var crouch_speed: float = 2.5
-@export var jump_velocity: float = 5.0
-@export var gravity: float = 13.0
+@export var jump_velocity: float = 7.0
+@export var gravity: float = 20.0
 
 @export_category("Collision Settings")
 @export var standing_height: float = 2.0
@@ -49,7 +49,7 @@ func set_crouching(crouching: bool) -> void:
 	# Only allow standing up if there's enough space
 	if is_crouching and not crouching and not _can_stand_up():
 		return
-	
+
 	is_crouching = crouching
 	_update_movement_speed()
 
@@ -79,32 +79,40 @@ func _setup_collision_dimensions() -> void:
 ## Smoothly updates the collision capsule size and position based on crouch state
 func _update_collision_capsule(delta: float) -> void:
 	var target_height: float = crouch_capsule_height if is_crouching else standing_capsule_height
-	var target_position: Vector3 = crouch_collision_position if is_crouching else standing_collision_position
-	
+	var target_position: Vector3 = (
+		crouch_collision_position if is_crouching else standing_collision_position
+	)
+
 	# Smoothly interpolate capsule height
-	capsule_shape.height = lerp(capsule_shape.height, target_height, delta * collision_transition_speed)
-	
+	capsule_shape.height = lerp(
+		capsule_shape.height, target_height, delta * collision_transition_speed
+	)
+
 	# Smoothly interpolate collision position
-	collision_shape.position = collision_shape.position.lerp(target_position, delta * collision_transition_speed)
+	collision_shape.position = collision_shape.position.lerp(
+		target_position, delta * collision_transition_speed
+	)
 
 
 ## Checks if the player can stand up from crouching position
 func _can_stand_up() -> bool:
 	if not is_crouching:
 		return true
-	
+
 	# Create a temporary shape query for standing collision
 	var space_state = player.get_world_3d().direct_space_state
 	var query = PhysicsShapeQueryParameters3D.new()
 	var temp_shape = CapsuleShape3D.new()
 	temp_shape.height = standing_capsule_height
 	temp_shape.radius = capsule_shape.radius
-	
+
 	query.shape = temp_shape
-	query.transform = Transform3D(Basis.IDENTITY, player.global_position + standing_collision_position)
+	query.transform = Transform3D(
+		Basis.IDENTITY, player.global_position + standing_collision_position
+	)
 	query.collision_mask = player.collision_mask
 	query.exclude = [player.get_rid()]
-	
+
 	var result = space_state.intersect_shape(query)
 	return result.is_empty()
 
@@ -118,14 +126,17 @@ func jump() -> void:
 func process_movement(delta: float) -> void:
 	# Update collision capsule based on crouch state
 	_update_collision_capsule(delta)
-	
+
 	# Apply gravity
 	if not player.is_on_floor():
 		player.velocity.y -= gravity * delta
-	
+
 	# Calculate movement direction in world space
-	var direction = (camera_controller.transform.basis * Vector3(input_direction.x, 0, input_direction.y)).normalized()
-	
+	var direction = (
+		(camera_controller.transform.basis * Vector3(input_direction.x, 0, input_direction.y))
+		. normalized()
+	)
+
 	# Apply movement based on ground state
 	if player.is_on_floor():
 		if direction:
