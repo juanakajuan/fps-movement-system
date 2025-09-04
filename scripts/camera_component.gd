@@ -20,8 +20,8 @@ var is_crouching: bool = false
 var standing_position: Vector3
 var crouch_position: Vector3
 
-@onready var camera_controller: Node3D = $CameraController
-@onready var camera: Camera3D = $CameraController/Camera3D
+@onready var camera_controller: Node3D = $%CameraController
+@onready var camera: Camera3D = $%Camera3D
 @onready var player: CharacterBody3D = get_parent()
 @onready var movement_component: MovementComponent = player.get_node("MovementComponent")
 

@@ -1,9 +1,9 @@
 extends CharacterBody3D
 class_name PlayerController
 
-@onready var movement_component: MovementComponent = $MovementComponent
-@onready var camera_component: CameraComponent = $CameraComponent
-@onready var input_component: InputComponent = $InputComponent
+@onready var movement_component: MovementComponent = $%MovementComponent
+@onready var camera_component: CameraComponent = $%CameraComponent
+@onready var input_component: InputComponent = $%InputComponent
 
 
 func _ready() -> void:
