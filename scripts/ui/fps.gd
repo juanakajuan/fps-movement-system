@@ -1,11 +1,16 @@
+## FPS counter UI component
+##
+## Simple UI overlay that displays the current frames per second in real-time.
 extends CanvasLayer
 
 
-# Called when the node enters the scene tree for the first time.
+## Initializes the FPS counter display
 func _ready() -> void:
-	pass  # Replace with function body.
+	pass
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+## Updates the FPS display every frame
+##
+## @param _delta Time elapsed since last frame (unused)
 func _process(_delta: float) -> void:
 	$Label.text = str(int(Engine.get_frames_per_second()))

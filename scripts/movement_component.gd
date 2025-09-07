@@ -1,3 +1,8 @@
+## Movement component that handles all player movement mechanics
+##
+## MovementComponent provides a complete FPS movement system including walking,
+## sprinting, crouching, jumping, and dynamic collision handling. Features smooth
+## transitions between movement states and realistic physics-based movement.
 extends Node
 class_name MovementComponent
 
@@ -29,11 +34,15 @@ var standing_collision_position: Vector3
 var crouch_collision_position: Vector3
 
 
+## Initializes movement parameters and collision dimensions
 func _ready() -> void:
 	current_speed = walk_speed
 	_setup_collision_dimensions()
 
 
+## Sets the input direction for movement calculation
+##
+## @param direction Normalized direction vector from input
 func set_input_direction(direction: Vector2) -> void:
 	input_direction = direction
 
@@ -118,34 +127,42 @@ func _can_stand_up() -> bool:
 
 
 ## Makes the player jump if on the floor and not crouching
+## Makes the player jump if conditions are met
+## Only allows jumping when on floor and not crouching
 func jump() -> void:
 	if player.is_on_floor() and not is_crouching:
 		player.velocity.y = jump_velocity
 
 
+## Main movement processing function called every physics frame
+## Handles collision updates, gravity, and movement calculations
+##
+## @param delta Physics time step
 func process_movement(delta: float) -> void:
 	# Update collision capsule based on crouch state
 	_update_collision_capsule(delta)
 
-	# Apply gravity
+	# Apply gravity when airborne
 	if not player.is_on_floor():
 		player.velocity.y -= gravity * delta
 
-	# Calculate movement direction in world space
+	# Calculate movement direction in world space relative to camera
 	var direction: Vector3 = (
 		(camera_controller.transform.basis * Vector3(input_direction.x, 0, input_direction.y))
 		. normalized()
 	)
 
-	# Apply movement based on ground state
+	# Apply different movement behaviors based on ground contact
 	if player.is_on_floor():
+		# Ground movement with immediate response or smooth deceleration
 		if direction:
 			player.velocity.x = direction.x * current_speed
 			player.velocity.z = direction.z * current_speed
 		else:
+			# Smooth deceleration when no input
 			player.velocity.x = lerp(player.velocity.x, direction.x * current_speed, delta * 7.0)
 			player.velocity.z = lerp(player.velocity.z, direction.z * current_speed, delta * 7.0)
 	else:
-		# Air control
+		# Air control with reduced responsiveness
 		player.velocity.x = lerp(player.velocity.x, direction.x * current_speed, delta * 3.0)
 		player.velocity.z = lerp(player.velocity.z, direction.z * current_speed, delta * 3.0)

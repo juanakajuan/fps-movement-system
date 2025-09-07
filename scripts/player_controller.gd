@@ -1,3 +1,9 @@
+## Main player controller that coordinates all player components
+##
+## PlayerController acts as the central hub for the FPS player system, managing
+## communication between the movement, camera, and input components. It handles
+## the physics body and coordinates all player actions through a component-based
+## architecture.
 extends CharacterBody3D
 class_name PlayerController
 
@@ -6,6 +12,7 @@ class_name PlayerController
 @onready var input_component: InputComponent = $%InputComponent
 
 
+## Initializes the player controller and sets up component connections
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
@@ -17,29 +24,44 @@ func _ready() -> void:
 	input_component.crouch_input.connect(_on_crouch_input)
 
 
+## Processes movement and camera effects every physics frame
 func _physics_process(delta: float) -> void:
 	movement_component.process_movement(delta)
 	camera_component.process_camera_effects(delta, velocity)
 	move_and_slide()
 
 
+## Signal handler for movement input from InputComponent
+##
+## @param direction Movement direction as Vector2 (x: left/right, y: forward/back)
 func _on_movement_input(direction: Vector2) -> void:
 	movement_component.set_input_direction(direction)
 
 
+## Signal handler for mouse look input from InputComponent
+##
+## @param mouse_delta Mouse movement delta for camera rotation
 func _on_look_input(mouse_delta: Vector2) -> void:
 	camera_component.handle_look_input(mouse_delta)
 
 
+## Signal handler for jump input from InputComponent
+## Only allows jumping when player is on the floor
 func _on_jump_input() -> void:
 	if is_on_floor():
 		movement_component.jump()
 
 
+## Signal handler for sprint input from InputComponent
+##
+## @param is_sprinting Whether the player is currently sprinting
 func _on_sprint_input(is_sprinting: bool) -> void:
 	movement_component.set_sprinting(is_sprinting)
 
 
+## Signal handler for crouch input from InputComponent
+##
+## @param is_crouching Whether the player is currently crouching
 func _on_crouch_input(is_crouching: bool) -> void:
 	movement_component.set_crouching(is_crouching)
 
