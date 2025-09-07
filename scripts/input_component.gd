@@ -26,7 +26,9 @@ func _unhandled_input(event: InputEvent) -> void:
 ## @param _delta Time elapsed since last frame (unused)
 func _process(_delta: float) -> void:
 	# Movement input using input map actions
-	var input_dir: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	var input_dir: Vector2 = Input.get_vector(
+		"move_left", "move_right", "move_forward", "move_backward"
+	)
 	movement_input.emit(input_dir)
 
 	# Jump input - single press detection

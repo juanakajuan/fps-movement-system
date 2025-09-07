@@ -10,11 +10,17 @@ class_name PlayerController
 @onready var movement_component: MovementComponent = $%MovementComponent
 @onready var camera_component: CameraComponent = $%CameraComponent
 @onready var input_component: InputComponent = $%InputComponent
+@onready var state_machine: StateMachine = StateMachine.new(self)
 
 
 ## Initializes the player controller and sets up component connections
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+	# Setup state machine
+	var idle_state: IdleState = IdleState.new()
+	state_machine.add_state("idle", idle_state)
+	state_machine.start("idle")
 
 	# Connect components
 	input_component.movement_input.connect(_on_movement_input)
@@ -26,6 +32,7 @@ func _ready() -> void:
 
 ## Processes movement and camera effects every physics frame
 func _physics_process(delta: float) -> void:
+	state_machine.physics_update(delta)
 	movement_component.process_movement(delta)
 	camera_component.process_camera_effects(delta, velocity)
 	move_and_slide()
@@ -68,3 +75,7 @@ func _on_crouch_input(is_crouching: bool) -> void:
 	# Only update camera if crouch state actually changed
 	if movement_component.is_crouching == is_crouching:
 		camera_component.set_crouching(is_crouching)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	state_machine.handle_input(event)

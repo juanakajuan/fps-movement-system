@@ -19,6 +19,7 @@ func _init(state_name: String = "") -> void:
 
 
 ## Called when entering this state
+##
 ## @param _previous_state: The state being transitioned from (can be null)
 func enter(_previous_state: State = null) -> void:
 	pass
@@ -30,24 +31,28 @@ func exit() -> void:
 
 
 ## Called every frame while this state is active
+##
 ## @param _delta: Time elapsed since the last frame
 func update(_delta: float) -> void:
 	pass
 
 
 ## Called every physics frame while this state is active
+##
 ## @param _delta: Time elapsed since the last physics frame
 func physics_update(_delta: float) -> void:
 	pass
 
 
 ## Called when input events occur while this state is active
+##
 ## @param _event: The input event that occurred
 func handle_input(_event: InputEvent) -> void:
 	pass
 
 
 ## Determines if this state can transition to another state
+##
 ## @param _next_state: The state we want to transition to
 ## @return: True if the transition is allowed, false otherwise
 func can_transition_to(_next_state: State) -> bool:
