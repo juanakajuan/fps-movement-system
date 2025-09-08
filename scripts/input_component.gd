@@ -8,9 +8,11 @@ class_name InputComponent
 
 signal movement_input(direction: Vector2)
 signal look_input(mouse_delta: Vector2)
-signal jump_input
-signal sprint_input(is_sprinting: bool)
-signal crouch_input(is_crouching: bool)
+signal jump_pressed
+signal sprint_started
+signal sprint_stopped
+signal crouch_started
+signal crouch_stopped
 
 
 ## Handles unprocessed input events, particularly mouse motion for camera look
@@ -19,6 +21,10 @@ signal crouch_input(is_crouching: bool)
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		look_input.emit(event.relative)
+
+
+var _was_sprinting: bool = false
+var _was_crouching: bool = false
 
 
 ## Processes continuous input actions every frame
@@ -33,12 +39,20 @@ func _process(_delta: float) -> void:
 
 	# Jump input - single press detection
 	if Input.is_action_just_pressed("jump"):
-		jump_input.emit()
+		jump_pressed.emit()
 
-	# Sprint input - hold to sprint
+	# Sprint input - detect start/stop events
 	var is_sprinting: bool = Input.is_action_pressed("sprint")
-	sprint_input.emit(is_sprinting)
+	if is_sprinting and not _was_sprinting:
+		sprint_started.emit()
+	elif not is_sprinting and _was_sprinting:
+		sprint_stopped.emit()
+	_was_sprinting = is_sprinting
 
-	# Crouch input - hold to crouch
+	# Crouch input - detect start/stop events
 	var is_crouching: bool = Input.is_action_pressed("crouch")
-	crouch_input.emit(is_crouching)
+	if is_crouching and not _was_crouching:
+		crouch_started.emit()
+	elif not is_crouching and _was_crouching:
+		crouch_stopped.emit()
+	_was_crouching = is_crouching

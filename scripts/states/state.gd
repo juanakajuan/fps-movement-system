@@ -51,6 +51,38 @@ func handle_input(_event: InputEvent) -> void:
 	pass
 
 
+## Called when movement input is received
+##
+## @param _direction: The movement direction vector
+func handle_movement_input(_direction: Vector2) -> void:
+	pass
+
+
+## Called when jump input is received
+func handle_jump_input() -> void:
+	pass
+
+
+## Called when sprint starts
+func handle_sprint_started() -> void:
+	pass
+
+
+## Called when sprint stops
+func handle_sprint_stopped() -> void:
+	pass
+
+
+## Called when crouch starts
+func handle_crouch_started() -> void:
+	pass
+
+
+## Called when crouch stops
+func handle_crouch_stopped() -> void:
+	pass
+
+
 ## Determines if this state can transition to another state
 ##
 ## @param _next_state: The state we want to transition to

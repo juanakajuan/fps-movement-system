@@ -10,6 +10,7 @@ const DEADZONE_THRESHOLD: float = 0.1
 
 var movement_component: MovementComponent
 var player: CharacterBody3D
+var current_movement_input: Vector2 = Vector2.ZERO
 
 
 ## Initialize the idle state
@@ -22,8 +23,10 @@ func enter(_previous_state: State = null) -> void:
 	player = state_machine.get_owner() as CharacterBody3D
 	movement_component = player.movement_component
 
-	# Clear any movement input when entering idle
+	# Set idle speed and clear movement input
+	movement_component.set_movement_speed(0.0)
 	movement_component.set_input_direction(Vector2.ZERO)
+	current_movement_input = Vector2.ZERO
 
 
 ## Called when exiting the idle state
@@ -40,29 +43,42 @@ func physics_update(delta: float) -> void:
 	_check_transitions()
 
 
-## Handle input events in idle state
-func handle_input(event: InputEvent) -> void:
-	# Jump input while idle
-	if event.is_action_pressed("jump") and player.is_on_floor():
+## Handle movement input in idle state
+func handle_movement_input(direction: Vector2) -> void:
+	current_movement_input = direction
+	movement_component.set_input_direction(direction)
+
+
+## Handle jump input in idle state
+func handle_jump_input() -> void:
+	if player.is_on_floor():
 		movement_component.jump()
 		state_finished.emit("jumping")
 
 
+## Handle sprint start in idle state
+func handle_sprint_started() -> void:
+	if current_movement_input.length() > DEADZONE_THRESHOLD:
+		state_finished.emit("running")
+
+
+## Handle crouch start in idle state
+func handle_crouch_started() -> void:
+	state_finished.emit("crouching")
+
+
+## Handle sprint stop in idle state (no-op)
+func handle_sprint_stopped() -> void:
+	pass
+
+
+## Handle crouch stop in idle state (no-op)
+func handle_crouch_stopped() -> void:
+	pass
+
+
 ## Check for state transitions when idle
 func _check_transitions() -> void:
-	# Check for movement input
-	var move_input: Vector2 = Vector2(
-		Input.get_axis("move_left", "move_right"), Input.get_axis("move_forward", "move_backward")
-	)
-
-	if move_input.length() > DEADZONE_THRESHOLD:
-		if Input.is_action_pressed("crouch"):
-			state_finished.emit("crouching")
-		elif Input.is_action_pressed("sprint"):
-			state_finished.emit("running")
-		else:
-			state_finished.emit("walking")
-
-	# Check for crouch input while idle
-	if Input.is_action_pressed("crouch"):
-		state_finished.emit("crouching")
+	# Transition to walking if there's movement input
+	if current_movement_input.length() > DEADZONE_THRESHOLD:
+		state_finished.emit("walking")

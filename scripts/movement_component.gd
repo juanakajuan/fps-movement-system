@@ -20,8 +20,7 @@ class_name MovementComponent
 
 var current_speed: float
 var input_direction: Vector2
-var is_sprinting: bool = false
-var is_crouching: bool = false
+var _collision_is_crouching: bool = false
 
 @onready var player: CharacterBody3D = get_parent()
 @onready var camera_controller: Node3D = player.get_node("CameraComponent/CameraController")
@@ -47,30 +46,23 @@ func set_input_direction(direction: Vector2) -> void:
 	input_direction = direction
 
 
-## Sets the sprinting state and updates current movement speed
-func set_sprinting(sprinting: bool) -> void:
-	is_sprinting = sprinting
-	_update_movement_speed()
+## Sets the movement speed directly (called by states)
+##
+## @param speed The desired movement speed
+func set_movement_speed(speed: float) -> void:
+	current_speed = speed
 
 
-## Sets the crouching state and updates current movement speed
-func set_crouching(crouching: bool) -> void:
-	# Only allow standing up if there's enough space
-	if is_crouching and not crouching and not _can_stand_up():
-		return
-
-	is_crouching = crouching
-	_update_movement_speed()
-
-
-## Updates the current movement speed based on player state
-func _update_movement_speed() -> void:
-	if is_crouching:
-		current_speed = crouch_speed
-	elif is_sprinting:
-		current_speed = sprint_speed
-	else:
-		current_speed = walk_speed
+## Gets current movement state information
+##
+## @return Dictionary with movement state data
+func get_movement_state() -> Dictionary:
+	return {
+		"speed": current_speed,
+		"velocity": player.velocity,
+		"is_on_floor": player.is_on_floor(),
+		"input_direction": input_direction
+	}
 
 
 ## Sets up the initial collision dimensions for standing and crouching
@@ -87,9 +79,9 @@ func _setup_collision_dimensions() -> void:
 
 ## Smoothly updates the collision capsule size and position based on crouch state
 func _update_collision_capsule(delta: float) -> void:
-	var target_height: float = crouch_capsule_height if is_crouching else standing_capsule_height
+	var target_height: float = crouch_capsule_height if _collision_is_crouching else standing_capsule_height
 	var target_position: Vector3 = (
-		crouch_collision_position if is_crouching else standing_collision_position
+		crouch_collision_position if _collision_is_crouching else standing_collision_position
 	)
 
 	# Smoothly interpolate capsule height
@@ -105,7 +97,7 @@ func _update_collision_capsule(delta: float) -> void:
 
 ## Checks if the player can stand up from crouching position
 func _can_stand_up() -> bool:
-	if not is_crouching:
+	if not _collision_is_crouching:
 		return true
 
 	# Create a temporary shape query for standing collision
@@ -130,8 +122,19 @@ func _can_stand_up() -> bool:
 ## Makes the player jump if conditions are met
 ## Only allows jumping when on floor and not crouching
 func jump() -> void:
-	if player.is_on_floor() and not is_crouching:
+	if player.is_on_floor() and not _collision_is_crouching:
 		player.velocity.y = jump_velocity
+
+
+## Sets the crouching collision state (called by states)
+##
+## @param crouching Whether the player should be in crouch collision mode
+func set_collision_crouching(crouching: bool) -> void:
+	# Only allow standing up if there's enough space
+	if _collision_is_crouching and not crouching and not _can_stand_up():
+		return
+	
+	_collision_is_crouching = crouching
 
 
 ## Main movement processing function called every physics frame

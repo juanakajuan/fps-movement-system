@@ -98,6 +98,44 @@ func handle_input(event: InputEvent) -> void:
 		_current_state.handle_input(event)
 
 
+## Forwards movement input to the current state
+##
+## @param direction The movement direction vector
+func handle_movement_input(direction: Vector2) -> void:
+	if _current_state:
+		_current_state.handle_movement_input(direction)
+
+
+## Forwards jump input to the current state
+func handle_jump_input() -> void:
+	if _current_state:
+		_current_state.handle_jump_input()
+
+
+## Forwards sprint start event to the current state
+func handle_sprint_started() -> void:
+	if _current_state:
+		_current_state.handle_sprint_started()
+
+
+## Forwards sprint stop event to the current state
+func handle_sprint_stopped() -> void:
+	if _current_state:
+		_current_state.handle_sprint_stopped()
+
+
+## Forwards crouch start event to the current state
+func handle_crouch_started() -> void:
+	if _current_state:
+		_current_state.handle_crouch_started()
+
+
+## Forwards crouch stop event to the current state
+func handle_crouch_stopped() -> void:
+	if _current_state:
+		_current_state.handle_crouch_stopped()
+
+
 ## Returns the name of the current state.
 ##
 ## @return The current state name, or empty string if no state is active.

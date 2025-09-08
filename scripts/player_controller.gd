@@ -19,15 +19,22 @@ func _ready() -> void:
 
 	# Setup state machine
 	var idle_state: IdleState = IdleState.new()
+	var walking_state: WalkingState = WalkingState.new()
+	var running_state: RunningState = RunningState.new()
+	
 	state_machine.add_state("idle", idle_state)
+	state_machine.add_state("walking", walking_state)
+	state_machine.add_state("running", running_state)
 	state_machine.start("idle")
 
 	# Connect components
 	input_component.movement_input.connect(_on_movement_input)
 	input_component.look_input.connect(_on_look_input)
-	input_component.jump_input.connect(_on_jump_input)
-	input_component.sprint_input.connect(_on_sprint_input)
-	input_component.crouch_input.connect(_on_crouch_input)
+	input_component.jump_pressed.connect(_on_jump_pressed)
+	input_component.sprint_started.connect(_on_sprint_started)
+	input_component.sprint_stopped.connect(_on_sprint_stopped)
+	input_component.crouch_started.connect(_on_crouch_started)
+	input_component.crouch_stopped.connect(_on_crouch_stopped)
 
 
 ## Processes movement and camera effects every physics frame
@@ -39,10 +46,11 @@ func _physics_process(delta: float) -> void:
 
 
 ## Signal handler for movement input from InputComponent
+## Forwards to state machine for processing
 ##
 ## @param direction Movement direction as Vector2 (x: left/right, y: forward/back)
 func _on_movement_input(direction: Vector2) -> void:
-	movement_component.set_input_direction(direction)
+	state_machine.handle_movement_input(direction)
 
 
 ## Signal handler for mouse look input from InputComponent
@@ -53,28 +61,28 @@ func _on_look_input(mouse_delta: Vector2) -> void:
 
 
 ## Signal handler for jump input from InputComponent
-## Only allows jumping when player is on the floor
-func _on_jump_input() -> void:
-	if is_on_floor():
-		movement_component.jump()
+func _on_jump_pressed() -> void:
+	state_machine.handle_jump_input()
 
 
-## Signal handler for sprint input from InputComponent
-##
-## @param is_sprinting Whether the player is currently sprinting
-func _on_sprint_input(is_sprinting: bool) -> void:
-	movement_component.set_sprinting(is_sprinting)
+## Signal handler for sprint started from InputComponent
+func _on_sprint_started() -> void:
+	state_machine.handle_sprint_started()
 
 
-## Signal handler for crouch input from InputComponent
-##
-## @param is_crouching Whether the player is currently crouching
-func _on_crouch_input(is_crouching: bool) -> void:
-	movement_component.set_crouching(is_crouching)
+## Signal handler for sprint stopped from InputComponent
+func _on_sprint_stopped() -> void:
+	state_machine.handle_sprint_stopped()
 
-	# Only update camera if crouch state actually changed
-	if movement_component.is_crouching == is_crouching:
-		camera_component.set_crouching(is_crouching)
+
+## Signal handler for crouch started from InputComponent
+func _on_crouch_started() -> void:
+	state_machine.handle_crouch_started()
+
+
+## Signal handler for crouch stopped from InputComponent
+func _on_crouch_stopped() -> void:
+	state_machine.handle_crouch_stopped()
 
 
 func _unhandled_input(event: InputEvent) -> void:
