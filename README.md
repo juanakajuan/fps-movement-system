@@ -1,4 +1,4 @@
-# fps-movement-system
+# FPS Movement System
 
 ## TODO
 
