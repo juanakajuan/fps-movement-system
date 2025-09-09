@@ -30,7 +30,7 @@ window/vsync/vsync_mode=0
 
 [dotnet]
 
-project/assembly_name="FPS Game"
+project/assembly_name="FPS Movement System"
 
 [input]
 
