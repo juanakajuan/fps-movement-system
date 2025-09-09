@@ -34,6 +34,9 @@ func exit() -> void:
 	pass
 
 
+## Called every frame while the idle state is active
+##
+## @param _delta: Time elapsed since the last frame
 func physics_update(delta: float) -> void:
 	# Apply smooth deceleration when idle
 	if player.is_on_floor():

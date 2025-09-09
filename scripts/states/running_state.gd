@@ -22,7 +22,7 @@ func _init() -> void:
 func enter(_previous_state: State = null) -> void:
 	player = state_machine.get_owner() as CharacterBody3D
 	movement_component = player.movement_component
-	
+
 	# Set sprint speed
 	movement_component.set_movement_speed(movement_component.sprint_speed)
 
@@ -32,10 +32,13 @@ func exit() -> void:
 	pass
 
 
+## Called every frame while the running state is active
+##
+## @param _delta: Time elapsed since the last frame
 func physics_update(_delta: float) -> void:
 	# Update movement component with current input
 	movement_component.set_input_direction(current_movement_input)
-	
+
 	_check_transitions()
 
 
