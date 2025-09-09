@@ -39,6 +39,7 @@ func _ready() -> void:
 	input_component.sprint_stopped.connect(_on_sprint_stopped)
 	input_component.crouch_started.connect(_on_crouch_started)
 	input_component.crouch_stopped.connect(_on_crouch_stopped)
+	input_component.debug_toggle_cursor.connect(_on_debug_toggle_cursor)
 
 
 ## Processes movement and camera effects every physics frame
@@ -87,6 +88,14 @@ func _on_crouch_started() -> void:
 ## Signal handler for crouch stopped from InputComponent
 func _on_crouch_stopped() -> void:
 	state_machine.handle_crouch_stopped()
+
+
+## Signal handler for debug cursor toggle from InputComponent
+func _on_debug_toggle_cursor() -> void:
+	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	else:
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
 func _unhandled_input(event: InputEvent) -> void:
