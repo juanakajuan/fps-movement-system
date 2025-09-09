@@ -1,0 +1,43 @@
+[gd_scene load_steps=8 format=3 uid="uid://dgprn6ou2xywe"]
+
+[ext_resource type="Script" uid="uid://cjrmehqh5flmm" path="res://scripts/player_controller.gd" id="1_jh7gh"]
+[ext_resource type="Script" uid="uid://cf55dpghspsye" path="res://scripts/input_component.gd" id="2_uxksl"]
+[ext_resource type="Script" uid="uid://d4lepid3uibhs" path="res://scripts/movement_component.gd" id="3_0c017"]
+[ext_resource type="Script" uid="uid://cdvtv443i6qxn" path="res://scripts/camera_component.gd" id="4_7va2w"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5ukr8"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_fo5ed"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_a02cp"]
+
+[node name="PlayerController" type="CharacterBody3D"]
+script = ExtResource("1_jh7gh")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.09363, 0)
+material_override = SubResource("StandardMaterial3D_5ukr8")
+mesh = SubResource("CapsuleMesh_fo5ed")
+
+[node name="StandingCollision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.09363, 0)
+shape = SubResource("CapsuleShape3D_a02cp")
+
+[node name="InputComponent" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_uxksl")
+
+[node name="MovementComponent" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("3_0c017")
+
+[node name="CameraComponent" type="Node3D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("4_7va2w")
+
+[node name="CameraController" type="Node3D" parent="CameraComponent"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraComponent/CameraController"]
+unique_name_in_owner = true

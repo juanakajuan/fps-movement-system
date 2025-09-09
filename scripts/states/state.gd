@@ -9,6 +9,9 @@ class_name State
 ## Emitted when this state wants to transition to another state
 signal state_finished(next_state_name: String)
 
+const DECELERATION_RATE: float = 7.0
+const DEADZONE_THRESHOLD: float = 0.1
+
 var state_machine: StateMachine
 var _name: String
 

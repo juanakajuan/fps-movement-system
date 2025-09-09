@@ -5,10 +5,8 @@
 extends State
 class_name IdleState
 
-const DECELERATION_RATE: float = 7.0
-const DEADZONE_THRESHOLD: float = 0.1
-
 var movement_component: MovementComponent
+var camera_component: CameraComponent
 var player: CharacterBody3D
 var current_movement_input: Vector2 = Vector2.ZERO
 
@@ -22,7 +20,10 @@ func _init() -> void:
 func enter(_previous_state: State = null) -> void:
 	player = state_machine.get_owner() as CharacterBody3D
 	movement_component = player.movement_component
+	camera_component = player.camera_component
 
+	print("Entering idle state from: ", _previous_state.get_state_name() if _previous_state else "none")
+	
 	# Set idle speed and clear movement input
 	movement_component.set_movement_speed(0.0)
 	movement_component.set_input_direction(Vector2.ZERO)

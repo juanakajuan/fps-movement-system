@@ -21,10 +21,14 @@ func _ready() -> void:
 	var idle_state: IdleState = IdleState.new()
 	var walking_state: WalkingState = WalkingState.new()
 	var running_state: RunningState = RunningState.new()
+	var jumping_state: JumpingState = JumpingState.new()
+	var crouching_state: CrouchingState = CrouchingState.new()
 	
 	state_machine.add_state("idle", idle_state)
 	state_machine.add_state("walking", walking_state)
 	state_machine.add_state("running", running_state)
+	state_machine.add_state("jumping", jumping_state)
+	state_machine.add_state("crouching", crouching_state)
 	state_machine.start("idle")
 
 	# Connect components

@@ -21,6 +21,7 @@ class_name MovementComponent
 var current_speed: float
 var input_direction: Vector2
 var _collision_is_crouching: bool = false
+var _wants_to_stand: bool = false
 
 @onready var player: CharacterBody3D = get_parent()
 @onready var camera_controller: Node3D = player.get_node("CameraComponent/CameraController")
@@ -115,7 +116,13 @@ func _can_stand_up() -> bool:
 	query.exclude = [player.get_rid()]
 
 	var result: Array[Dictionary] = space_state.intersect_shape(query)
-	return result.is_empty()
+	var can_stand: bool = result.is_empty()
+	
+	print("Can stand up check: ", can_stand, " (found ", result.size(), " collisions)")
+	if not can_stand and result.size() > 0:
+		print("Collision objects: ", result)
+	
+	return can_stand
 
 
 ## Makes the player jump if on the floor and not crouching
@@ -126,15 +133,35 @@ func jump() -> void:
 		player.velocity.y = jump_velocity
 
 
+## Forces the collision state without ceiling checks (used for state transitions)
+##
+## @param crouching Whether the player should be in crouch collision mode
+func force_collision_crouching(crouching: bool) -> void:
+	print("Forcing collision crouching to: ", crouching)
+	_collision_is_crouching = crouching
+
+
 ## Sets the crouching collision state (called by states)
 ##
 ## @param crouching Whether the player should be in crouch collision mode
 func set_collision_crouching(crouching: bool) -> void:
-	# Only allow standing up if there's enough space
-	if _collision_is_crouching and not crouching and not _can_stand_up():
-		return
+	print("Setting collision crouching to: ", crouching, " (was: ", _collision_is_crouching, ")")
+	
+	# If trying to stand up, check for ceiling collision
+	if _collision_is_crouching and not crouching:
+		_wants_to_stand = true
+		if not _can_stand_up():
+			print("Cannot stand up - blocked by ceiling, collision stays crouched")
+			# Don't change the collision state, will retry each frame
+			return
+		else:
+			print("Clear to stand up")
+			_wants_to_stand = false
+	else:
+		_wants_to_stand = false
 	
 	_collision_is_crouching = crouching
+	print("Collision crouching now: ", _collision_is_crouching)
 
 
 ## Main movement processing function called every physics frame
@@ -142,6 +169,12 @@ func set_collision_crouching(crouching: bool) -> void:
 ##
 ## @param delta Physics time step
 func process_movement(delta: float) -> void:
+	# Check if we can stand up when we want to but couldn't before
+	if _wants_to_stand and _collision_is_crouching and _can_stand_up():
+		print("Can now stand up - ceiling clear!")
+		_collision_is_crouching = false
+		_wants_to_stand = false
+	
 	# Update collision capsule based on crouch state
 	_update_collision_capsule(delta)
 

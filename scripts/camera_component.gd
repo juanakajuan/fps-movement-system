@@ -93,9 +93,13 @@ func set_crouching(crouching: bool) -> void:
 	is_crouching = crouching
 
 
-## Smoothly transitions camera height based on crouch state
+## Smoothly transitions camera height based on crouch state and collision
 func _update_crouch_camera(delta: float) -> void:
-	var target_position: Vector3 = crouch_position if is_crouching else standing_position
+	# Check if the collision is actually crouched (player might be stuck under ceiling)
+	var collision_is_crouched: bool = movement_component._collision_is_crouching if movement_component else false
+	var should_crouch_camera: bool = is_crouching or collision_is_crouched
+	
+	var target_position: Vector3 = crouch_position if should_crouch_camera else standing_position
 	camera_controller.position = camera_controller.position.lerp(
 		target_position, delta * crouch_transition_speed
 	)

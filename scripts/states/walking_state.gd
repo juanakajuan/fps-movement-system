@@ -6,9 +6,8 @@
 extends State
 class_name WalkingState
 
-const DEADZONE_THRESHOLD: float = 0.1
-
 var movement_component: MovementComponent
+var camera_component: CameraComponent
 var player: CharacterBody3D
 var current_movement_input: Vector2 = Vector2.ZERO
 
@@ -22,7 +21,10 @@ func _init() -> void:
 func enter(_previous_state: State = null) -> void:
 	player = state_machine.get_owner() as CharacterBody3D
 	movement_component = player.movement_component
+	camera_component = player.camera_component
 
+	print("Entering walking state from: ", _previous_state.get_state_name() if _previous_state else "none")
+	
 	# Set walking speed
 	movement_component.set_movement_speed(movement_component.walk_speed)
 
