@@ -24,7 +24,7 @@ func _init() -> void:
 func enter(_previous_state: State = null) -> void:
 	player = state_machine.get_owner() as CharacterBody3D
 	movement_component = player.movement_component
-	
+
 	# Apply jump velocity when entering from ground states
 	if _previous_state and _previous_state.get_state_name() in ["idle", "walking", "running"]:
 		if player.is_on_floor():
@@ -33,7 +33,6 @@ func enter(_previous_state: State = null) -> void:
 
 ## Called when exiting the jumping state
 func exit() -> void:
-	# Reset timing variables
 	jump_buffer_time = 0.0
 
 
@@ -41,15 +40,12 @@ func exit() -> void:
 ##
 ## @param delta: Time elapsed since the last frame
 func physics_update(delta: float) -> void:
-	# Update timing variables
 	jump_buffer_time -= delta
-	
-	# Handle air movement with reduced responsiveness
-	_handle_air_movement(delta)
-	
-	# Check for landing and state transitions
+
+	# Update movement component with current input (air movement handled by movement component)
+	movement_component.set_input_direction(current_movement_input)
+
 	_check_transitions()
-	
 	was_on_floor_last_frame = player.is_on_floor()
 
 
@@ -60,7 +56,6 @@ func handle_movement_input(direction: Vector2) -> void:
 
 ## Handle jump input in jumping state (for jump buffering)
 func handle_jump_input() -> void:
-	# Set jump buffer for landing
 	jump_buffer_time = JUMP_BUFFER_DURATION
 
 
@@ -84,56 +79,26 @@ func handle_crouch_stopped() -> void:
 	pass
 
 
-## Handle air movement with reduced responsiveness
-func _handle_air_movement(delta: float) -> void:
-	if not movement_component:
-		return
-	
-	# Get camera-relative direction
-	var camera_controller: Node3D = player.get_node("CameraComponent/CameraController")
-	var direction: Vector3 = (
-		camera_controller.transform.basis * Vector3(current_movement_input.x, 0, current_movement_input.y)
-	).normalized()
-	
-	# Determine target speed based on current input
-	var target_speed: float = movement_component.walk_speed
-	if Input.is_action_pressed("sprint") and current_movement_input.length() > DEADZONE_THRESHOLD:
-		target_speed = movement_component.sprint_speed
-	
-	# Apply air control with reduced responsiveness (3.0 vs 7.0 on ground)
-	if direction:
-		player.velocity.x = lerp(player.velocity.x, direction.x * target_speed, delta * 3.0)
-		player.velocity.z = lerp(player.velocity.z, direction.z * target_speed, delta * 3.0)
-	else:
-		# Slight deceleration when no input
-		player.velocity.x = lerp(player.velocity.x, 0.0, delta * 1.5)
-		player.velocity.z = lerp(player.velocity.z, 0.0, delta * 1.5)
-
-
 ## Check for state transitions when jumping
 func _check_transitions() -> void:
-	# Check for landing (on ground and moving downward or stationary)
 	if player.is_on_floor() and player.velocity.y <= 0.0:
 		_handle_landing()
 
 
 ## Handle landing and determine appropriate state transition
 func _handle_landing() -> void:
-	# Check for buffered jump input
 	if jump_buffer_time > 0.0:
-		# Execute buffered jump
 		player.velocity.y = movement_component.jump_velocity
 		jump_buffer_time = 0.0
 		return
-	
+
 	# Determine next state based on current input and actions
 	var input_magnitude: float = current_movement_input.length()
-	
-	# Check if crouching
+
 	if Input.is_action_pressed("crouch"):
 		state_finished.emit("crouching")
 		return
-	
+
 	# Check movement state
 	if input_magnitude <= DEADZONE_THRESHOLD:
 		state_finished.emit("idle")
